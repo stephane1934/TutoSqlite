@@ -19,9 +19,12 @@ namespace TutoSqlite
 {
     public partial class MainWindow : Window
     {
+        List<Contact> contacts;
+
         public MainWindow()
         {
             InitializeComponent();
+            contacts = new List<Contact>();
             ReadDatabase();
         }
 
@@ -34,8 +37,6 @@ namespace TutoSqlite
 
         void ReadDatabase()
         {
-            List<Contact> contacts;
-
             using (SQLiteConnection conn = new SQLiteConnection(App.databasePath))
             {
                 conn.CreateTable<Contact>();
@@ -46,6 +47,13 @@ namespace TutoSqlite
             {
                 contactsListView.ItemsSource = contacts;
             }
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextBox searchTextBox = sender as TextBox;
+            var filteredList = contacts.Where(c => c.Name.ToLower().Contains(searchTextBox.Text.ToLower())).ToList();
+            contactsListView.ItemsSource = filteredList;
         }
     }
 }
