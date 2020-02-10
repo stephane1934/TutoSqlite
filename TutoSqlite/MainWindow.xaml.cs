@@ -40,7 +40,7 @@ namespace TutoSqlite
             using (SQLiteConnection conn = new SQLiteConnection(App.databasePath))
             {
                 conn.CreateTable<Contact>();
-                contacts = conn.Table<Contact>().ToList();
+                contacts = conn.Table<Contact>().OrderBy(c => c.Name).ToList();
             }
 
             if(contacts != null)
@@ -54,6 +54,16 @@ namespace TutoSqlite
             TextBox searchTextBox = sender as TextBox;
             var filteredList = contacts.Where(c => c.Name.ToLower().Contains(searchTextBox.Text.ToLower())).ToList();
             contactsListView.ItemsSource = filteredList;
+        }
+
+        private void contactsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Contact selectedContact = (Contact)contactsListView.SelectedItem;
+            if(selectedContact != null)
+            {
+                ContactDetailsWindow contactDetailsWindow = new ContactDetailsWindow(selectedContact);
+                contactDetailsWindow.ShowDialog();
+            }
         }
     }
 }
